@@ -17,5 +17,7 @@ Imports:
     dplyr,
     ggbeeswarm,
     ggplot2,
+    matrixcalc,
     mvtnorm,
+    stats,
     tidyr

@@ -12,7 +12,14 @@ remotes::install_github("dfleis/criteval")
 
 ## TODO
 
-* Multivariate case ($K > 2$, $p > 1$).
+* Implement the special case for bivariate $W$ which has a closed-form solution for the covariance/condition number.
+
+* Change bivariate case to be written in terms of the condition number ratio $r := \kappa(\Sigma)/\kappa(R) \geq 1$. 
+For two random variables with correlation coefficient $\rho$, one has $\kappa(R) = (1 + |\rho|)/(1 - |\rho|)$. This is equivalent to
+the current method of directly supplying a condition number for $\kappa(\Sigma)$, but is more straightforward to work with since all one has to worry
+about is whether the ratio $r \geq 1$.
+
+* More descriptive variable names, particularly in `create_data_generator.R`
 
 * (Readme) Add our GRF-FPT reference. Provide a more complete summary and review of the problem for better context.
 
