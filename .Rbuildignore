@@ -1,0 +1,8 @@
+^criteval\.Rproj$
+^\.Rproj\.user$
+^LICENSE\.md$
+^\.Rhistory$
+^.*\.Rproj$
+^ignore/
+^dev/
+^man-roxygen$
