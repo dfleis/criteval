@@ -2,11 +2,11 @@ library(criteval)
 seed <- 1
 min.node.size <- 10
 .n.skip <- 2
-.grid.size <- 200
-.tol.integrate <- 1e-1
+.grid.size <- 250
+.tol.integrate <- 1e-3
 
-n <- 1000
-rho.W <- 0.5
+n <- 2000
+rho.W <- 0.75
 kappa.ratio <- 1
 q.W <- 1
 p.X <- 3
@@ -15,8 +15,10 @@ sigma.eps <- 1
 s <- 50
 theta_FUN_list <- list(
   theta1 = function(x) plogis((x[,1] - 0.23), scale = 1/s),
-  theta2 = function(x) plogis(-(x[,1] - 0.27), scale = 1/s) + 0.4 * plogis(x[,1] - 0.75, scale = 1/s),
-  theta3 = function(x) plogis((x[,2] - 0.75), scale = 1/s)
+  theta2 = function(x) plogis(-(x[,1] - 0.27), scale = 1/s),
+  theta3 = function(x) 0.5 * plogis(x[,2] - 0.75, scale = 1/s),
+  theta3 = function(x) 0.25 * plogis((x[,3] - 0.73), scale = 1/s),
+  theta4 = function(x) 0.25 * plogis((x[,3] - 0.77), scale = 1/s)
 )
 nu_FUN <- function(x) {0 * x[,1]}
 
@@ -25,7 +27,7 @@ nu_FUN <- function(x) {0 * x[,1]}
 #--------------------------------------------------
 set.seed(1)
 
-df.res <- run_criteval_sim(
+out <- run_criteval_sim(
   n = n,
   rho.W = rho.W,
   #R.W = R,
@@ -46,6 +48,8 @@ df.res <- run_criteval_sim(
 #----- Plot tests
 #--------------------------------------------------
 library(ggplot2)
+df.res <- out$results
+
 MY.ALPHA <- c(
   1, # Delta^*
   1, # Delta_V^*
@@ -123,10 +127,10 @@ df.res %>%
     axis.title = element_text(size =  11, color = "gray30"),
     axis.title.y = element_blank(),
     legend.key.width = unit(0.75, "cm"),
-    legend.margin = margin(t = 0, r = 0, b = 0, l = -25),
+    legend.margin = margin(t = 0, r = 0, b = 0, l = -20),
     legend.text = element_text(size = 14),
     legend.title = element_blank(),
-    plot.margin = margin(t = 5, r = 0, b = 5, l = 5),
+    plot.margin = margin(t = 5, r = 5, b = 5, l = 5),
     plot.title = element_text(size = 11),
     strip.background = element_blank(),
     strip.text = element_text(size = 11, color = "gray30")

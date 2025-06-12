@@ -176,5 +176,10 @@ run_criteval_sim <- function(
       normalized = factor(.data$normalized, levels = c("Normalized", "Raw"))
     ) %>%
     dplyr::filter(!is.nan(.data$value))
-  return(df.res)
+
+  list(
+    dgp = dgp,
+    data = sim.data,
+    results = df.res
+  )
 }
