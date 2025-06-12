@@ -27,7 +27,7 @@ generate_AR1 <- function(dim, rho) {
 #' @return A \eqn{K}-by-\eqn{K} correlation matrix.
 #'
 #' @export
-generate_R <- function(rho = NULL, K = NULL, R = NULL) {
+generate_corr <- function(rho = NULL, K = NULL, R = NULL) {
   if (is.null(R)) {
     if (is.null(rho) || is.null(K)) {
       stop("`rho` and `K` must be specified when `R` is NULL.")

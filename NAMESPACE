@@ -2,7 +2,7 @@
 
 export(data_generator)
 export(generate_AR1)
-export(generate_R)
+export(generate_corr)
 export(generate_cov)
 importFrom(cubature,hcubature)
 importFrom(ggbeeswarm,geom_beeswarm)

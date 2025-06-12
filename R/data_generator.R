@@ -14,7 +14,7 @@
 #' set of component-specific seeds.
 #'
 #' @inheritParams generate_cov
-#' @param rho.W The AR(1) correlation parameter for the `W` regressors. See `rho` in [generate_R()].
+#' @param rho.W The AR(1) correlation parameter for the `W` regressors. See `rho` in [generate_corr()].
 #'    Ignored if a correlation matrix `R.W` is provided.
 #' @param R.W An optional, pre-specified correlation matrix for `W`. See `R` in [generate_cov()].
 #' @param q.W The number of "strong" (high relative variance) features in `W`. See `q` in [generate_cov()].
@@ -34,8 +34,6 @@
 #' @return An object of class `criteval_generator`. This is a list containing
 #'    generator functions (`$generate`, `$X`, `$W`) and key parameters (`$Sigma`,
 #'    `$theta_FUN`, etc.) that define the DGP.
-#'
-#' @export
 #'
 #' @examples
 #' \dontrun{
@@ -68,6 +66,8 @@
 #' # gen$W(n = 5, seed = 123)
 #' }
 #'
+#' @export
+#'
 #' @importFrom mvtnorm rmvnorm
 #' @importFrom stats pnorm rnorm
 data_generator <- function(
@@ -85,7 +85,7 @@ data_generator <- function(
   K.W <- length(theta_FUN_list)
 
   # Setup for W regressors
-  R.W <- generate_R(R = R.W, rho = rho.W, K = K.W)
+  R.W <- generate_corr(R = R.W, rho = rho.W, K = K.W)
   cov.obj.W <- generate_cov(kappa.ratio = kappa.ratio, R = R.W, q = q.W, ...)
   Sigma.W <- cov.obj.W$Sigma
   if (is.null(mu.W)) mu.W <- rep(0, K.W)

@@ -21,7 +21,7 @@ data_generator(
 \arguments{
 \item{kappa.ratio}{The target condition number ratio, must be \code{kappa.ratio >= 1}.}
 
-\item{rho.W}{The AR(1) correlation parameter for the \code{W} regressors. See \code{rho} in \code{\link[=generate_R]{generate_R()}}.
+\item{rho.W}{The AR(1) correlation parameter for the \code{W} regressors. See \code{rho} in \code{\link[=generate_corr]{generate_corr()}}.
 Ignored if a correlation matrix \code{R.W} is provided.}
 
 \item{R.W}{An optional, pre-specified correlation matrix for \code{W}. See \code{R} in \code{\link[=generate_cov]{generate_cov()}}.}
