@@ -4,13 +4,27 @@
 \alias{get_criteria}
 \title{Get a list of predefined criterion objects}
 \usage{
-get_criteria()
+get_criteria(names = NULL)
+}
+\arguments{
+\item{names}{An optional character vector of criterion names to retrieve.
+If \code{NULL} (the default), a named list of all available criteria is returned.}
 }
 \value{
-A named list of \code{criteval_criterion} objects.
+A named list of \code{criteval_criterion} objects. If \code{names} is a single
+string, a single \code{criteval_criterion} object is returned.
 }
 \description{
 This function returns a named list of predefined \code{criteval_criterion} objects.
 This serves as a central registry for all available criteria, making it easy
 to extend the framework by simply adding new definitions here.
+}
+\examples{
+\dontrun{
+get_criteria()          # Returns the full list
+get_criteria("Delta.V") # Returns just the Delta.V object
+get_criteria(c("Delta", "Delta.pop")) # Returns a list with just those two
+get_criteria("foo")     # Throws a helpful error
+}
+
 }

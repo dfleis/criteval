@@ -66,17 +66,18 @@ usethis::use_import_from(
     "pnorm",
     "rnorm",
     "approxfun",
-    "integrate"
+    "integrate",
+    "setNames"
   )
 )
 usethis::use_package("dplyr", type = "Imports")
 usethis::use_package("tidyr", type = "Imports")
-usethis::use_package("bench", type = "Imports")
-usethis::use_package("ggplot2", type = "Imports")
-usethis::use_import_from(
-  package = "ggbeeswarm",
-  fun = c(
-    "geom_beeswarm",
-    "geom_quasirandom"
-  )
-)
+# usethis::use_package("bench", type = "Imports")
+# usethis::use_package("ggplot2", type = "Imports")
+# usethis::use_import_from(
+#   package = "ggbeeswarm",
+#   fun = c(
+#     "geom_beeswarm",
+#     "geom_quasirandom"
+#   )
+# )

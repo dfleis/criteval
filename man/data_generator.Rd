@@ -5,7 +5,7 @@
 \title{Create a data generator factory}
 \usage{
 data_generator(
-  kappa.ratio,
+  kappa.ratio = 1,
   rho.W = NULL,
   R.W = NULL,
   q.W = 1,

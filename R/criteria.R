@@ -43,48 +43,60 @@ new_criterion <- function(name, precompute = NULL, compute) {
 #' This serves as a central registry for all available criteria, making it easy
 #' to extend the framework by simply adding new definitions here.
 #'
-#' @return A named list of `criteval_criterion` objects.
+#' @param names An optional character vector of criterion names to retrieve.
+#'   If `NULL` (the default), a named list of all available criteria is returned.
+#'
+#' @return A named list of `criteval_criterion` objects. If `names` is a single
+#'   string, a single `criteval_criterion` object is returned.
+#'
+#' @examples
+#' \dontrun{
+#' get_criteria()          # Returns the full list
+#' get_criteria("Delta.V") # Returns just the Delta.V object
+#' get_criteria(c("Delta", "Delta.pop")) # Returns a list with just those two
+#' get_criteria("foo")     # Throws a helpful error
+#' }
 #'
 #' @export
-get_criteria <- function() {
-  list(
-    Delta.pop = new_criterion(
+get_criteria <- function(names = NULL) {
+  .registry <- list(
+    new_criterion(
       name = "Delta.pop",
       compute = function(split.data, precomputed.data) {
         diff.star <- split.data$theta.star.C1 - split.data$theta.star.C2
         split.data$wt * sum(diff.star^2)
       }
     ),
-    DeltaVPop = new_criterion(
+    new_criterion(
       name = "Delta.V.pop",
       compute = function(split.data, precomputed.data) {
         diff.star <- split.data$theta.star.C1 - split.data$theta.star.C2
         split.data$wt * sum((split.data$V %*% diff.star)^2)
       }
     ),
-    Delta = new_criterion(
+    new_criterion(
       name = "Delta",
       compute = function(split.data, precomputed.data) {
         diff.hat <- split.data$theta.hat.C1 - split.data$theta.hat.C2
         split.data$wt * sum(diff.hat^2)
       }
     ),
-    DeltaV = new_criterion(
+    new_criterion(
       name = "Delta.V",
       compute = function(split.data, precomputed.data) {
         diff.hat <- split.data$theta.hat.C1 - split.data$theta.hat.C2
         split.data$wt * sum((split.data$V %*% diff.hat)^2)
       }
     ),
-
-    grad = new_criterion(
+    new_criterion(
       name = "Delta.grad",
       precompute = function(sim.data) {
         W <- scale(sim.data$W, scale = FALSE)
         Y <- scale(sim.data$Y, scale = FALSE)
         n <- nrow(W)
 
-        theta.hat.P <- solve(crossprod(W)) %*% crossprod(W, Y)
+        # theta.hat.P <- solve(crossprod(W)) %*% crossprod(W, Y)
+        theta.hat.P <- solve_OLS(w.mat = W, y.vec = Y, intercept = F)
         psi.theta <- sweep(W, 1, Y - W %*% theta.hat.P, "*")
         A.P.inv <- solve(crossprod(W)/n)
 
@@ -100,13 +112,14 @@ get_criteria <- function() {
         split.data$wt * sum(diff.rho.grad^2)
       }
     ),
-    fpt = new_criterion(
+    new_criterion(
       name = "Delta.fpt",
       precompute = function(sim.data) {
         W <- scale(sim.data$W, scale = FALSE)
         Y <- scale(sim.data$Y, scale = FALSE)
 
-        theta.hat.P <- solve(crossprod(W)) %*% crossprod(W, Y)
+        # theta.hat.P <- solve(crossprod(W)) %*% crossprod(W, Y)
+        theta.hat.P <- solve_OLS(w.mat = W, y.vec = Y, intercept = F)
         psi.theta <- sweep(W, 1, Y - W %*% theta.hat.P, "*")
 
         list(rho.fpt = psi.theta)
@@ -115,11 +128,28 @@ get_criteria <- function() {
         rho.fpt <- precomputed.data$rho.fpt
 
         diff.rho.fpt <-
-          colMeans(rho.fpt[split.data$C1.indices, , drop = FALSE]) -
-          colMeans(rho.fpt[split.data$C2.indices, , drop = FALSE])
+          colMeans(rho.fpt[split.data$C1, , drop = FALSE]) -
+          colMeans(rho.fpt[split.data$C2, , drop = FALSE])
 
         split.data$wt * sum(diff.rho.fpt^2)
       }
     )
   )
+
+  .registry <- stats::setNames(.registry, nm = sapply(.registry, function(x) x$name))
+  if (is.null(names)) {
+    return(.registry)
+  }
+
+  unmatched <- setdiff(names, names(.registry))
+  if (length(unmatched) > 0L) {
+    stop("The following criteria were not found: ", paste(unmatched, collapse = ", "))
+  }
+
+  result <- .registry[names]
+  if (length(result) == 1L) {
+    return(result[[1L]])
+  }
+
+  return(result)
 }

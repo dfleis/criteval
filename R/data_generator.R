@@ -78,7 +78,7 @@
 #' @importFrom mvtnorm rmvnorm
 #' @importFrom stats pnorm rnorm
 data_generator <- function(
-    kappa.ratio, rho.W = NULL, R.W = NULL, q.W = 1, mu.W = NULL,
+    kappa.ratio = 1, rho.W = NULL, R.W = NULL, q.W = 1, mu.W = NULL,
     p.X = 1, rho.X = 0, sigma.eps = 1, theta_FUN_list, nu_FUN, ...) {
 
   #--- One-time setup based on DGP parameters
@@ -96,6 +96,15 @@ data_generator <- function(
   cov.obj.W <- generate_cov(kappa.ratio = kappa.ratio, R = R.W, q = q.W, ...)
   Sigma.W <- cov.obj.W$Sigma
   if (is.null(mu.W)) mu.W <- rep(0, K.W)
+  if (length(mu.W) != nrow(Sigma.W)) {
+    stop(
+      "Mean vector `mu.W` and covariance matrix `Sigma.W` have non-conforming size:",
+      sprintf(
+        "\n\tlength(mu.W) = %i, NROW(Sigma.W) = %i, length(theta_FUN_list) = %i",
+        length(mu.W), NROW(R.W), length(theta_FUN_list)
+      )
+    )
+  }
 
   # Setup for X covariates (latent correlation)
   Sigma.X.latent <- generate_AR1(dim = p.X, rho = rho.X)
