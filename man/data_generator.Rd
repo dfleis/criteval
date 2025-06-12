@@ -59,8 +59,15 @@ returns an object that can be used to repeatedly generate datasets from that
 DGP.
 }
 \details{
+The regressors \code{W} are sampled from a multivariate Gaussian whose covariance
+structure is determined by the provided correlation structure (either through
+the AR(1) correlation parameter \code{rho} or via an explicit correlation matrix \code{R})
+as well as target condition number ratio \code{kappa.ratio}. The condition number
+ratio is the ratio of the condition numbers for the desired covariance matrix
+and generated/supplied correlation matrix.
+
 The auxiliary covariates \code{X} are generated from a Gaussian copula with an
-AR(1) correlation structure defined by \code{rho.X}. When \code{rho.X = 0} (the default),
+AR(1) correlation structure defined by \code{rho}. When \code{rho = 0} (the default),
 the \code{X} covariates are independent Uniform(0,1).
 
 This factory ensures reproducibility. Providing the same \code{seed} will yield

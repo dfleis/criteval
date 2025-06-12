@@ -20,10 +20,11 @@ solve_OLS <- function(indices, w.mat, y.vec, intercept = TRUE) {
   drop(qr.solve(w.mat, y.vec))
 }
 
-#' Compute OLS solutions for a split
+#' Compute empirical solution for the local parameter estimates under a varying-coefficient model
+#' fit across a candidate split
 #'
-#' A wrapper function that computes the OLS solutions for the two child nodes
-#' (C1 and C2) induced by a split.
+#' A wrapper function that computes child solutions \eqn{\hat\theta_{C_1}} and \eqn{\hat\theta_{C_2}}
+#' for the optimal local parameters fit over the data in \eqn{C_1} and \eqn{C_2}, respectively.
 #'
 #' @param C1 A vector of indices (logical or integer) for the first child node. See [solve_OLS()].
 #' @param C2 A vector of indices (logical or integer) for the second child node. See [solve_OLS()].
@@ -34,7 +35,7 @@ solve_OLS <- function(indices, w.mat, y.vec, intercept = TRUE) {
 #' @return A list containing the named coefficient vectors for C1 and C2.
 #'
 #' @keywords internal
-compute_split_OLS <- function(C1, C2, w.mat, y.vec, labels = NULL, ...) {
+compute_theta_hat <- function(C1, C2, w.mat, y.vec, labels = NULL, ...) {
   lapply(list("C1" = C1, "C2" = C2), function(indices) {
     # The first coefficient from solve_OLS is the intercept, which we drop to
     # keep only the theta components for the criteria calculations.
