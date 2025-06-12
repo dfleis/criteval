@@ -13,8 +13,8 @@ data_generator(
   p.X = 1,
   rho.X = 0,
   sigma.eps = 1,
-  nu_FUN,
   theta_FUN_list,
+  nu_FUN,
   ...
 )
 }
@@ -38,12 +38,12 @@ corresponds to independent Uniform(0,1) covariates.}
 
 \item{sigma.eps}{The standard deviation of the Gaussian noise term epsilon.}
 
-\item{nu_FUN}{A function that takes an \code{n}-by-\code{p.X} matrix \code{X} and returns the
-\code{n}-dimensional nuisance vector \code{nu_FUN(X)}.}
-
 \item{theta_FUN_list}{A list of \eqn{K} functions, where each function takes the
 \code{n}-by-\code{p.X} matrix \code{X} and returns an \code{n}-dimensional vector for one component
 of \code{theta_FUN_list[[k]](X)}.}
+
+\item{nu_FUN}{A function that takes an \code{n}-by-\code{p.X} matrix \code{X} and returns the
+\code{n}-dimensional nuisance vector \code{nu_FUN(X)}.}
 
 \item{...}{Additional arguments passed to \code{\link[=generate_cov]{generate_cov()}}.}
 }
@@ -67,7 +67,7 @@ ratio is the ratio of the condition numbers for the desired covariance matrix
 and generated/supplied correlation matrix.
 
 The auxiliary covariates \code{X} are generated from a Gaussian copula with an
-AR(1) correlation structure defined by \code{rho}. When \code{rho = 0} (the default),
+AR(1) correlation structure defined by \code{rho.X}. When \code{rho.X = 0} (the default),
 the \code{X} covariates are independent Uniform(0,1).
 
 This factory ensures reproducibility. Providing the same \code{seed} will yield

@@ -22,23 +22,21 @@ See \code{\link[=precompute_integrals_along_dim]{precompute_integrals_along_dim(
 \value{
 A list containing two named numeric vectors, \code{C1} and \code{C2},
 representing the conditional expectations \eqn{\theta_{C_1}^*} and
-\eqn{\theta_{C_2}^*}.
+\eqn{\theta_{C_2}^*} solved over the corresponding child region.
 }
 \description{
 Calculates the conditional expectation of the target effect functions
 \eqn{\theta^*(x)} over the two child regions created by a binary split.
-}
-\details{
-This function computes \eqn{\theta_{C_j}^* := \mathbb{E}[\theta^*(X) \mid X \in S_j]}
-for the two child regions \eqn{S_1, S_2}. The split is defined by a dimension
-\eqn{\ell} and a threshold \eqn{t}, where
-\deqn{S_1 \equiv S_1(\ell, t) = \{x \in [0,1]^p : x_\ell \leq t\}}
-and
-\deqn{S_2 \equiv S_2(\ell, t) = \{x \in [0,1]^p : x_\ell > t\}.}
-}
-\note{
 The calculation assumes that the covariates \eqn{X} are \strong{uniformly distributed}
 over the unit hypercube \eqn{[0,1]^p}. Under this assumption, the conditional
 expectation simplifies to the integral of \eqn{\theta^*(x)} over the region,
 divided by the region's volume.
+}
+\details{
+This function computes \eqn{\theta_{C_j}^* := \mathbb{E}[\theta^*(X) \mid X \in S_j]}
+for the two child regions \eqn{S_1, S_2} given split parameters \eqn{\ell, t}. The
+split is defined by a dimension \eqn{\ell} and a threshold \eqn{t}, where
+\deqn{S_1 \equiv S_1(\ell, t) = \{x \in [0,1]^p : x_\ell \leq t\}}
+and
+\deqn{S_2 \equiv S_2(\ell, t) = \{x \in [0,1]^p : x_\ell > t\}.}
 }

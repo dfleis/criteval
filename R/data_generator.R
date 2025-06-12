@@ -13,7 +13,7 @@
 #' and generated/supplied correlation matrix.
 #'
 #' The auxiliary covariates `X` are generated from a Gaussian copula with an
-#' AR(1) correlation structure defined by `rho`. When `rho = 0` (the default),
+#' AR(1) correlation structure defined by `rho.X`. When `rho.X = 0` (the default),
 #' the `X` covariates are independent Uniform(0,1).
 #'
 #' This factory ensures reproducibility. Providing the same `seed` will yield
@@ -79,7 +79,7 @@
 #' @importFrom stats pnorm rnorm
 data_generator <- function(
     kappa.ratio, rho.W = NULL, R.W = NULL, q.W = 1, mu.W = NULL,
-    p.X = 1, rho.X = 0, sigma.eps = 1, nu_FUN, theta_FUN_list, ...) {
+    p.X = 1, rho.X = 0, sigma.eps = 1, theta_FUN_list, nu_FUN, ...) {
 
   #--- One-time setup based on DGP parameters
   .make_theta_FUN <- function(FUN_list) {
