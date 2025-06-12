@@ -49,11 +49,34 @@ usethis::use_mit_license()
 # usethis::use_testthat()
 
 #----- Set some package dependencies
+usethis::use_import_from("mvtnorm", "rmvnorm")
+usethis::use_import_from("cubature", "hcubature")
+usethis::use_import_from(
+  package = "matrixcalc",
+  fun = c(
+    "is.square.matrix",
+    "is.positive.definite"
+  )
+)
+usethis::use_import_from(
+  package = "stats",
+  fun = c(
+    "optimize",
+    "toeplitz",
+    "pnorm",
+    "rnorm",
+    "approxfun",
+    "integrate"
+  )
+)
 usethis::use_package("dplyr", type = "Imports")
 usethis::use_package("tidyr", type = "Imports")
 usethis::use_package("bench", type = "Imports")
 usethis::use_package("ggplot2", type = "Imports")
-usethis::use_import_from("mvtnorm", "rmvnorm")
-usethis::use_import_from("matrixcalc", c("is.square.matrix", "is.positive.definite"))
-usethis::use_import_from("ggbeeswarm", c("geom_beeswarm", "geom_quasirandom"))
-usethis::use_import_from("stats", c("optimize", "toeplitz", "pnorm", "rnorm"))
+usethis::use_import_from(
+  package = "ggbeeswarm",
+  fun = c(
+    "geom_beeswarm",
+    "geom_quasirandom"
+  )
+)

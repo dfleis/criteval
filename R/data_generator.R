@@ -46,7 +46,7 @@
 #' )
 #' nu_fun <- function(x) { 0 * x[,1] }
 #'
-#' gen <- create_data_generator(
+#' gen <- data_generator(
 #'   kappa.ratio = 1.5, # W: Target condition number ratio kappa(Sigma.W)/kappa(R.W)
 #'   rho.W = 0.6,       # W: AR(1) correlation parameter for W
 #'   q.W = 1,           # W: Number of relative high variance regressors W
@@ -70,7 +70,7 @@
 #'
 #' @importFrom mvtnorm rmvnorm
 #' @importFrom stats pnorm rnorm
-create_data_generator <- function(
+data_generator <- function(
     kappa.ratio, rho.W = NULL, R.W = NULL, q.W = 1, mu.W = NULL,
     p.X = 1, rho.X = 0, sigma.eps = 1, nu_FUN, theta_FUN_list, ...) {
 
@@ -160,6 +160,6 @@ create_data_generator <- function(
     )
   )
 
-  class(generator) <- "criteval_generator"
+  class(generator) <- "criteval_data_generator"
   return(generator)
 }
