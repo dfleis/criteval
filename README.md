@@ -4,12 +4,12 @@ This package provides a simple, encapsulated framework for running some basic si
 This toy simulation framework looks at the behaviour of several splitting criteria designed to identify heterogeneity in the data with respect to estimates of some underlying effect
 functions $\theta^*(x)$ in under a varying-coefficient model (VCM)
 
-\[
-\mathbb E[Y \mid X = x] = \nu^* (x) + W^\top \theta^* (x), 
-\]
+$$
+\mathbb E[Y \mid X = x] = \nu^\star (x) + W^\top \theta^\star (x), 
+$$
 
 where $W = (W_1,\ldots, W_K)^\top \in \mathbb R^K$ denotes a set of primary regressors, $Y \in \mathbb R$ denotes a scalar outcome, and $X \in \mathcal X = [0,1]^p$ denotes auxiliary covariates such that the model can be described as *conditionally linear* given $X$.
-Here, the $\theta^*(x) = (\theta_1^*(x),\ldots,\theta_K^*(x))$ denote the target effect functions with each component function $\theta_k^*(x)$ denoting the effect of the corresponding regressor $W_k$ on the outcome $Y$ local to the covariates at $X = x$.
+Here, the $\theta^\star(x) = (\theta_1^\star(x),\ldots,\theta_K^\star(x))$ denote the target effect functions with each component function $\theta_k^*(x)$ denoting the effect of the corresponding regressor $W_k$ on the outcome $Y$ local to the covariates at $X = x$.
 
 ## Installation
 
