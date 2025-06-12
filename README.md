@@ -1,6 +1,15 @@
-# criteval: A basic simulation pipeline for evaluating GRF-style splitting criteria
+# criteval: A basic simulation pipeline for evaluating GRF-style splitting criteria for varying-coefficient models
 
 This package provides a simple, encapsulated framework for running some basic simulations that evaluate different splitting criteria used in tree-based recursive partitioning, particularly those in the style of Generalized Random Forests (GRF).
+This toy simulation framework looks at the behaviour of several splitting criteria designed to identify heterogeneity in the data with respect to estimates of some underlying effect
+functions $\theta^*(x)$ in under a varying-coefficient model (VCM)
+
+\[
+\mathbb E[Y \mid X = x] = \nu^*(x) + W^\top \theta^*(x), 
+\]
+
+where $W = (W_1,\ldots, W_K)^\top \in \mathbb R^K$ denotes a set of primary regressors, $Y \in \mathbb R$ denotes a scalar outcome, and $X \in \mathcal X = [0,1]^p$ denotes auxiliary covariates such that the model can be described as *conditionally linear* given $X$.
+Here, the $\theta^*(x) = (\theta_1^*(x),\ldots,\theta_K^*(x))$ denote the target effect functions with each component function $\theta_k^*(x)$ denoting the effect of the corresponding regressor $W_k$ on the outcome $Y$ local to the covariates at $X = x$.
 
 ## Installation
 
@@ -26,12 +35,6 @@ about is whether the ratio $r \geq 1$.
 ## Scope and intention
 
 * **Data generation:** Includes tools to generate synthetic data following varying-coefficient models where the correlation and conditioning of the regressors are precisely controlled.
-The underlying varying-coefficient model looks like:
-$$
-\mathbb E[Y \mid X = x] = \nu^*(x) + W^\top \theta^*(x), 
-$$
-where $W = (W_1,\ldots, W_K)^\top \in \mathbb R^K$ denotes a set of primary regressors, $Y \in \mathbb R$ denotes a scalar outcome, and $X \in \mathcal X = [0,1]^p$ denotes auxiliary covariates such that the model can be described as *conditionally linear* given $X$.
-Here, the $\theta^*(x) = (\theta_1^*(x),\ldots,\theta_K^*(x))$ denote the target effect functions with each component function $\theta_k^*(x)$ denoting the effect of the corresponding regressor $W_k$ on the outcome $Y$ local to the covariates at $X = x$.
 
 * **Criteria evaluation:** The main simulation loop is designed to scan across all potential binary splits in the initial dataset and calculates the value of multiple criteria at each candidate split.
 
