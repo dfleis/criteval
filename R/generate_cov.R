@@ -20,8 +20,9 @@ generate_AR1 <- function(dim, rho) {
 #' A helper function to generate a \eqn{K}-by-\eqn{K} correlation matrix, defaulting to an
 #' AR(1) structure if a specific matrix `R` is not provided.
 #'
-#' @param rho The AR(1) correlation parameter, a value in (-1, 1). Used if `R` is `NULL`.
-#' @param K The target dimension for the matrix. Required if `R` is `NULL`.
+#' @param rho The AR(1) correlation parameter, a value in (-1, 1). See [generate_AR1()].
+#'    Only used if `R` is `NULL`.
+#' @param K The target dimension for the matrix. Required if `R` is `NULL`, ignored otherwise.
 #' @param R An optional, pre-specified correlation matrix. If provided, `rho` and `K` are ignored.
 #'
 #' @return A \eqn{K}-by-\eqn{K} correlation matrix.
@@ -30,10 +31,10 @@ generate_AR1 <- function(dim, rho) {
 generate_corr <- function(rho = NULL, K = NULL, R = NULL) {
   if (is.null(R)) {
     if (is.null(rho) || is.null(K)) {
-      stop("`rho` and `K` must be specified when `R` is NULL.")
+      stop("`rho` and `K` must be specified if `R` is NULL.")
     }
     if (rho <= -1 || rho >= 1) {
-      stop("AR(1) parameter `rho` must be in (-1, 1).")
+      stop("AR(1) parameter `rho` must satisfy -1 < rho < 1.")
     }
     if (!isTRUE(K > 1)) {
       stop("Dimension `K` must be an integer >= 2.")

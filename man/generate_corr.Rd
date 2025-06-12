@@ -7,9 +7,10 @@
 generate_corr(rho = NULL, K = NULL, R = NULL)
 }
 \arguments{
-\item{rho}{The AR(1) correlation parameter, a value in (-1, 1). Used if \code{R} is \code{NULL}.}
+\item{rho}{The AR(1) correlation parameter, a value in (-1, 1). See \code{\link[=generate_AR1]{generate_AR1()}}.
+Only used if \code{R} is \code{NULL}.}
 
-\item{K}{The target dimension for the matrix. Required if \code{R} is \code{NULL}.}
+\item{K}{The target dimension for the matrix. Required if \code{R} is \code{NULL}, ignored otherwise.}
 
 \item{R}{An optional, pre-specified correlation matrix. If provided, \code{rho} and \code{K} are ignored.}
 }
