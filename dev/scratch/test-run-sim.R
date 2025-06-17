@@ -1,8 +1,8 @@
 library(criteval)
 seed <- 1
 min.node.size <- 10
-.n.skip <- 2
-.grid.size <- 400
+.n.skip <- 5
+.grid.size <- 250
 .tol.integrate <- 1e-3
 
 n <- 1000
@@ -13,13 +13,13 @@ p.X <- 1
 sigma.eps <- 0
 
 s <- 30
-theta_FUN_list <- list(
-  theta1 = function(x) plogis((x[,1] - 0.23), scale = 1/s),
-  theta2 = function(x) plogis(-(x[,1] - 0.27), scale = 1/s),
-  theta3 = function(x) 0.5 * plogis(x[,2] - 0.75, scale = 1/s),
-  theta4 = function(x) 0.25 * plogis((x[,3] - 0.73), scale = 1/s),
-  theta5 = function(x) 0.25 * plogis((x[,3] - 0.77), scale = 1/s)
-)
+# theta_FUN_list <- list(
+#   theta1 = function(x) plogis((x[,1] - 0.23), scale = 1/s),
+#   theta2 = function(x) plogis(-(x[,1] - 0.27), scale = 1/s),
+#   theta3 = function(x) 0.5 * plogis(x[,2] - 0.75, scale = 1/s),
+#   theta4 = function(x) 0.25 * plogis((x[,3] - 0.73), scale = 1/s),
+#   theta5 = function(x) 0.25 * plogis((x[,3] - 0.77), scale = 1/s)
+# )
 theta_FUN_list <- list(
   theta1 = function(x) plogis((x[,1] - 0.23), scale = 1/s),
   theta2 = function(x) plogis(-(x[,1] - 0.27), scale = 1/s),
