@@ -5,10 +5,11 @@
 \title{Create a data generator factory}
 \usage{
 data_generator(
-  kappa.ratio = 1,
+  kappa.ratio = NULL,
   rho.W = NULL,
   R.W = NULL,
   q.W = 1,
+  Sigma.W = NULL,
   mu.W = NULL,
   p.X = 1,
   rho.X = 0,
@@ -21,12 +22,19 @@ data_generator(
 \arguments{
 \item{kappa.ratio}{The target condition number ratio, must be \code{kappa.ratio >= 1}.}
 
-\item{rho.W}{The AR(1) correlation parameter for the \code{W} regressors. See \code{rho} in \code{\link[=generate_corr]{generate_corr()}}.
-Ignored if a correlation matrix \code{R.W} is provided.}
+\item{rho.W}{The AR(1) correlation matrix parameter for the Gaussian samples \code{W}. See
+argument \code{rho} in \code{\link[=generate_corr]{generate_corr()}}. Ignored if a correlation matrix \code{R.W} or covariance
+matrix \code{Sigma.W} is provided.}
 
-\item{R.W}{An optional, pre-specified correlation matrix for \code{W}. See \code{R} in \code{\link[=generate_cov]{generate_cov()}}.}
+\item{R.W}{An optional correlation matrix for the Gaussian samples \code{W}. See argument \code{R} in
+\code{\link[=generate_cov]{generate_cov()}}. Takes precedence over \code{rho.W}, and ignored if a covariance matrix \code{Sigma.W}
+is provided.}
 
-\item{q.W}{The number of "strong" (high relative variance) features in \code{W}. See \code{q} in \code{\link[=generate_cov]{generate_cov()}}.}
+\item{q.W}{The number of "strong" (high relative variance) features in \code{W}. See argument \code{q} in
+\code{\link[=generate_cov]{generate_cov()}}. Ignored if a covariance matrix \code{Sigma.W} is provided.}
+
+\item{Sigma.W}{An optional covariance matrix for the Gaussian samples \code{W}. If \code{Sigma.W} is
+provided then the arguments \code{rho.W}, \code{R.W}, and \code{q.W} are ignored.}
 
 \item{mu.W}{An optional mean vector for the regressors \code{W}. Defaults to a zero vector.}
 
@@ -53,18 +61,31 @@ generator functions (\verb{$generate}, \verb{$X}, \verb{$W}) and key parameters 
 \verb{$theta_FUN}, etc.) that define the DGP.
 }
 \description{
-This function acts as a factory method to produce a data generator object.
-It takes all the parameters that define a data-generating process (DGP) and
-returns an object that can be used to repeatedly generate datasets from that
-DGP.
+This function acts as a factory method and produces a data generator object.
+The data generator object contains functions that can be called to generate
+a full and partial datasets following the specified data-generating process (DGP).
 }
 \details{
-The regressors \code{W} are sampled from a multivariate Gaussian whose covariance
-structure is determined by the provided correlation structure (either through
-the AR(1) correlation parameter \code{rho} or via an explicit correlation matrix \code{R})
-as well as target condition number ratio \code{kappa.ratio}. The condition number
-ratio is the ratio of the condition numbers for the desired covariance matrix
-and generated/supplied correlation matrix.
+The data generator factory takes all the parameters that define a DGP for a
+varying-coefficient model (VCM) of the form
+\deqn{Y_i = \nu(X_i) + W_i^\top \theta(X_i) + \epsilon_i,}
+where \eqn{\nu:\mathcal X \to \mathbb R} is a user-specified covariate-dependent
+intercept function and \eqn{\theta:\mathcal X\to\mathbb R^K} is a user-specified
+covariate-dependent effect function. Each component \eqn{\theta_k(x)} of the
+\eqn{K}-dimensional effect \eqn{\theta(x) = (\theta_1(x),\ldots,\theta_K(x))} corresponds
+to the effect of the \eqn{k}-th regressor \eqn{W_{i,k}} on the response \eqn{Y_i},
+local to covariate level \eqn{X_i = x}.
+
+The primary regressors \code{W} are sampled from a multivariate Gaussian distribution
+with mean vector \code{mu.W} and covariance matrix \code{Sigma.W}. If a covariance matrix is
+not supplied, then the covariance structure is instead determined by the provided
+correlation structure (either through the AR(1) correlation parameter \code{rho.W} or
+via an explicit correlation matrix \code{R}) as well as supplied condition number ratio
+\code{kappa.ratio}. The condition number ratio is the ratio of the condition numbers
+\deqn{\frac{\kappa(\Sigma)}{\kappa(R)} = \texttt{kappa.ratio},}
+where \eqn{\kappa(\Sigma)} and \eqn{\kappa(R)} denote the spectral condition numbers
+of the covariance and correlation matrices, respectively. Note that if \code{Sigma.W} is
+supplied then \code{R}, \code{rho.W}, and \code{kappa.ratio} are all ignored.
 
 The auxiliary covariates \code{X} are generated from a Gaussian copula with an
 AR(1) correlation structure defined by \code{rho.X}. When \code{rho.X = 0} (the default),

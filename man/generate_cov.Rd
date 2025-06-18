@@ -16,7 +16,7 @@ generate_cov(
 \arguments{
 \item{kappa.ratio}{The target condition number ratio, must be \code{kappa.ratio >= 1}.}
 
-\item{R}{A \eqn{K}-by-\eqn{K} strictly positive definite correlation matrix.}
+\item{R}{A \eqn{K\times K} strictly positive definite correlation matrix.}
 
 \item{q}{The number of "strong" (high relative variance) features. These features have
 their variance set to 1. The remaining \code{K - q} features have variance \code{s < 1}, where
@@ -33,8 +33,8 @@ numbers of both, target condition number ratio, and the final observed condition
 number ratio given the numerical optimization procedure.
 }
 \description{
-Generates a \eqn{K}-by-\eqn{K} covariance matrix \code{Sigma} given a correlation
-matrix \code{R} and a target condition number ratio \code{kappa.ratio} defines as the
-ratio of spectral condition numbers \eqn{\kappa(\Sigma)/\kappa(R)}, where \eqn{\Sigma}
-is the desired covariance matrix and \eqn{R} is the supplied correlation matrix.
+Given a correlation matrix \code{R} and a target condition number ratio \code{kappa.ratio},
+this function creates a covariance matrix \code{Sigma} with the property that
+\deqn{\frac{\kappa(\Sigma)}{\kappa(R)} = \texttt{kappa.ratio},}
+where \eqn{\kappa(A)} denotes the spectral condition number of a matrix \eqn{A}.
 }

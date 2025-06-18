@@ -1,5 +1,4 @@
-#' Run a customizable splitting criteria simulation under a varying-coefficient
-#' model design
+#' Run the splitting criteria simulation
 #'
 #' Orchestrates a simulation to evaluate and compare splitting criteria in their
 #' ability to detect heterogeneity in an unobserved parameter \eqn{\theta^*(x)}.
@@ -8,11 +7,16 @@
 #' with respect to \eqn{\theta^*(x)}.
 #'
 #' @param n Integer, the total number of observations.
-#' @param kappa.ratio Numeric, the target condition number ratio for the `W` covariance matrix.
-#' @param rho.W Numeric, the AR(1) correlation for `W` regressors.
-#' @param R.W A pre-specified correlation matrix for `W`.
-#' @param q.W Integer, the number of "strong" (high-variance) `W` regressors.
+#' @param kappa.ratio Numeric, the target condition number ratio for the covariance matrix
+#'    of the primary regressors `W`. Ignored if a covariance matrix `Sigma.W` is provided.
+#' @param rho.W Numeric, the AR(1) correlation for `W` regressors. Ignored if either a
+#'    correlation matrix `R.W` or a covariance matrix `Sigma.W` are provided.
+#' @param R.W A pre-specified correlation matrix for `W`. Ignored if a covariance matrix
+#'    `Sigma.W` is provided.
+#' @param q.W Integer, the number of "strong" (high-variance) `W` regressors. Ignored if a
+#'    covariance matrix `Sigma.W` is provided.
 #' @param mu.W Numeric vector, the mean of `W` regressors.
+#' @param Sigma.W A covariance matrix for `W`.
 #' @param p.X Integer, the dimension of the auxiliary covariates `X`.
 #' @param sigma.eps Numeric, the standard deviation of the error term.
 #' @param theta_FUN_list A list of functions defining the `theta*(x)` components.
@@ -38,7 +42,7 @@
 #' @importFrom dplyr %>% .data bind_rows mutate group_by ungroup filter recode
 run_criteval_sim <- function(
     n,
-    kappa.ratio, rho.W = NULL, R.W = NULL, q.W, mu.W = NULL,
+    kappa.ratio, rho.W = NULL, R.W = NULL, q.W, mu.W = NULL, Sigma.W = NULL,
     p.X, sigma.eps,
     theta_FUN_list, nu_FUN,
     criteria = criteval::get_criteria(),
@@ -53,12 +57,13 @@ run_criteval_sim <- function(
 
   #--- Generation
   message(sprintf("%s :: %s...", format(Sys.time()), "Generating data"))
-  dgp <- criteval::data_generator(
+  dgp <- data_generator(
     kappa.ratio    = kappa.ratio,
     rho.W          = rho.W,
     R.W            = R.W,
     q.W            = q.W,
     mu.W           = mu.W,
+    Sigma.W        = Sigma.W,
     p.X            = p.X,
     sigma.eps      = sigma.eps,
     theta_FUN_list = theta_FUN_list,

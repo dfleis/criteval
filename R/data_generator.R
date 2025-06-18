@@ -1,16 +1,29 @@
 #' Create a data generator factory
 #'
-#' This function acts as a factory method to produce a data generator object.
-#' It takes all the parameters that define a data-generating process (DGP) and
-#' returns an object that can be used to repeatedly generate datasets from that
-#' DGP.
+#' This function acts as a factory method and produces a data generator object.
+#' The data generator object contains functions that can be called to generate
+#' a full and partial datasets following the specified data-generating process (DGP).
 #'
-#' The regressors `W` are sampled from a multivariate Gaussian whose covariance
-#' structure is determined by the provided correlation structure (either through
-#' the AR(1) correlation parameter `rho` or via an explicit correlation matrix `R`)
-#' as well as target condition number ratio `kappa.ratio`. The condition number
-#' ratio is the ratio of the condition numbers for the desired covariance matrix
-#' and generated/supplied correlation matrix.
+#' The data generator factory takes all the parameters that define a DGP for a
+#' varying-coefficient model (VCM) of the form
+#' \deqn{Y_i = \nu(X_i) + W_i^\top \theta(X_i) + \epsilon_i,}
+#' where \eqn{\nu:\mathcal X \to \mathbb R} is a user-specified covariate-dependent
+#' intercept function and \eqn{\theta:\mathcal X\to\mathbb R^K} is a user-specified
+#' covariate-dependent effect function. Each component \eqn{\theta_k(x)} of the
+#' \eqn{K}-dimensional effect \eqn{\theta(x) = (\theta_1(x),\ldots,\theta_K(x))} corresponds
+#' to the effect of the \eqn{k}-th regressor \eqn{W_{i,k}} on the response \eqn{Y_i},
+#' local to covariate level \eqn{X_i = x}.
+#'
+#' The primary regressors `W` are sampled from a multivariate Gaussian distribution
+#' with mean vector `mu.W` and covariance matrix `Sigma.W`. If a covariance matrix is
+#' not supplied, then the covariance structure is instead determined by the provided
+#' correlation structure (either through the AR(1) correlation parameter `rho.W` or
+#' via an explicit correlation matrix `R`) as well as supplied condition number ratio
+#' `kappa.ratio`. The condition number ratio is the ratio of the condition numbers
+#' \deqn{\frac{\kappa(\Sigma)}{\kappa(R)} = \texttt{kappa.ratio},}
+#' where \eqn{\kappa(\Sigma)} and \eqn{\kappa(R)} denote the spectral condition numbers
+#' of the covariance and correlation matrices, respectively. Note that if `Sigma.W` is
+#' supplied then `R`, `rho.W`, and `kappa.ratio` are all ignored.
 #'
 #' The auxiliary covariates `X` are generated from a Gaussian copula with an
 #' AR(1) correlation structure defined by `rho.X`. When `rho.X = 0` (the default),
@@ -21,11 +34,17 @@
 #' set of component-specific seeds.
 #'
 #' @inheritParams generate_cov
-#' @param rho.W The AR(1) correlation parameter for the `W` regressors. See `rho` in [generate_corr()].
-#'    Ignored if a correlation matrix `R.W` is provided.
-#' @param R.W An optional, pre-specified correlation matrix for `W`. See `R` in [generate_cov()].
-#' @param q.W The number of "strong" (high relative variance) features in `W`. See `q` in [generate_cov()].
+#' @param rho.W The AR(1) correlation matrix parameter for the Gaussian samples `W`. See
+#'    argument `rho` in [generate_corr()]. Ignored if a correlation matrix `R.W` or covariance
+#'    matrix `Sigma.W` is provided.
+#' @param R.W An optional correlation matrix for the Gaussian samples `W`. See argument `R` in
+#'    [generate_cov()]. Takes precedence over `rho.W`, and ignored if a covariance matrix `Sigma.W`
+#'    is provided.
+#' @param q.W The number of "strong" (high relative variance) features in `W`. See argument `q` in
+#'    [generate_cov()]. Ignored if a covariance matrix `Sigma.W` is provided.
 #' @param mu.W An optional mean vector for the regressors `W`. Defaults to a zero vector.
+#' @param Sigma.W An optional covariance matrix for the Gaussian samples `W`. If `Sigma.W` is
+#'    provided then the arguments `rho.W`, `R.W`, and `q.W` are ignored.
 #' @param p.X The dimension of the auxiliary covariates `X`.
 #' @param rho.X The AR(1) correlation for the latent Gaussian variables used to
 #'    generate the `X` covariates via a copula. Defaults to `rho.X = 0`, which
@@ -76,10 +95,19 @@
 #' @export
 #'
 #' @importFrom mvtnorm rmvnorm
-#' @importFrom stats pnorm rnorm
+#' @importFrom stats pnorm rnorm cov2cor
+#' @importFrom matrixcalc is.positive.definite
 data_generator <- function(
-    kappa.ratio = 1, rho.W = NULL, R.W = NULL, q.W = 1, mu.W = NULL,
-    p.X = 1, rho.X = 0, sigma.eps = 1, theta_FUN_list, nu_FUN, ...) {
+    kappa.ratio = NULL,
+    rho.W = NULL,
+    R.W = NULL,
+    q.W = 1,
+    Sigma.W = NULL,
+    mu.W = NULL,
+    p.X = 1,
+    rho.X = 0,
+    sigma.eps = 1,
+    theta_FUN_list, nu_FUN, ...) {
 
   #--- One-time setup based on DGP parameters
   .make_theta_FUN <- function(FUN_list) {
@@ -92,9 +120,16 @@ data_generator <- function(
   K.W <- length(theta_FUN_list)
 
   # Setup for W regressors
-  R.W <- generate_corr(R = R.W, rho = rho.W, K = K.W)
-  cov.obj.W <- generate_cov(kappa.ratio = kappa.ratio, R = R.W, q = q.W, ...)
-  Sigma.W <- cov.obj.W$Sigma
+  if (is.null(Sigma.W)) {
+    R.W <- generate_corr(R = R.W, rho = rho.W, K = K.W)
+    cov.obj.W <- generate_cov(kappa.ratio = kappa.ratio, R = R.W, q = q.W, ...)
+    Sigma.W <- cov.obj.W$Sigma
+  } else {
+    if (!matrixcalc::is.positive.definite(Sigma.W)) {
+      stop("Regressor covariance matrix `Sigma.W` must be positive definite.")
+    }
+    R.W <- stats::cov2cor(Sigma.W)
+  }
   if (is.null(mu.W)) mu.W <- rep(0, K.W)
   if (length(mu.W) != nrow(Sigma.W)) {
     stop(

@@ -12,7 +12,7 @@ generate_AR1(dim, rho)
 \item{rho}{The AR(1) correlation parameter, a value in (-1, 1).}
 }
 \value{
-A \code{dim}-by-\code{dim} matrix with the AR(1) structure.
+A \code{dim}-by-\code{dim} matrix with the AR(1) correlation matrix structure.
 }
 \description{
 Creates a square correlation matrix with an Autoregressive(1) structure.

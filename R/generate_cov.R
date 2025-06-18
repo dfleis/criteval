@@ -5,7 +5,7 @@
 #' @param dim The dimension of the square matrix.
 #' @param rho The AR(1) correlation parameter, a value in (-1, 1).
 #'
-#' @return A `dim`-by-`dim` matrix with the AR(1) structure.
+#' @return A `dim`-by-`dim` matrix with the AR(1) correlation matrix structure.
 #'
 #' @export
 #'
@@ -17,15 +17,15 @@ generate_AR1 <- function(dim, rho) {
 
 #' Generate a correlation matrix
 #'
-#' A helper function to generate a \eqn{K}-by-\eqn{K} correlation matrix, defaulting to an
+#' A helper function to generate a \eqn{K\times K} correlation matrix, defaulting to an
 #' AR(1) structure if a specific matrix `R` is not provided.
 #'
 #' @param rho The AR(1) correlation parameter, a value in (-1, 1). See [generate_AR1()].
 #'    Only used if `R` is `NULL`.
-#' @param K The target dimension for the matrix. Required if `R` is `NULL`, ignored otherwise.
-#' @param R An optional, pre-specified correlation matrix. If provided, `rho` and `K` are ignored.
+#' @param K The target dimension for the matrix. Required if `R = NULL`, ignored otherwise.
+#' @param R An optional correlation matrix. If provided, `rho` and `K` are ignored.
 #'
-#' @return A \eqn{K}-by-\eqn{K} correlation matrix.
+#' @return A \eqn{K\times K} correlation matrix.
 #'
 #' @export
 generate_corr <- function(rho = NULL, K = NULL, R = NULL) {
@@ -47,13 +47,13 @@ generate_corr <- function(rho = NULL, K = NULL, R = NULL) {
 #' Generate a covariance matrix with a desired condition number ratio relative to a
 #' correlation matrix
 #'
-#' Generates a \eqn{K}-by-\eqn{K} covariance matrix `Sigma` given a correlation
-#' matrix `R` and a target condition number ratio `kappa.ratio` defines as the
-#' ratio of spectral condition numbers \eqn{\kappa(\Sigma)/\kappa(R)}, where \eqn{\Sigma}
-#' is the desired covariance matrix and \eqn{R} is the supplied correlation matrix.
+#' Given a correlation matrix `R` and a target condition number ratio `kappa.ratio`,
+#' this function creates a covariance matrix `Sigma` with the property that
+#' \deqn{\frac{\kappa(\Sigma)}{\kappa(R)} = \texttt{kappa.ratio},}
+#' where \eqn{\kappa(A)} denotes the spectral condition number of a matrix \eqn{A}.
 #'
 #' @param kappa.ratio The target condition number ratio, must be `kappa.ratio >= 1`.
-#' @param R A \eqn{K}-by-\eqn{K} strictly positive definite correlation matrix.
+#' @param R A \eqn{K\times K} strictly positive definite correlation matrix.
 #' @param q The number of "strong" (high relative variance) features. These features have
 #'    their variance set to 1. The remaining `K - q` features have variance `s < 1`, where
 #'    `s` is solved for numerically in order to satisfy the condition number ratio. Must

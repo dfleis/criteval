@@ -1,18 +1,19 @@
-library(criteval)
+# library(criteval)
 seed <- 1
 min.node.size <- 10
 .n.skip <- 5
 .grid.size <- 250
 .tol.integrate <- 1e-3
 
-n <- 1000
-rho.W <- 0.7
+n <- 5000
+rho.W <- -0.99
 kappa.ratio <- 1
 q.W <- 1 # irrelevant if kappa.ratio = 1
 p.X <- 1
 sigma.eps <- 0
+# Sigma.W <- diag(c(1, 10))
 
-s <- 30
+s <- 100
 # theta_FUN_list <- list(
 #   theta1 = function(x) plogis((x[,1] - 0.23), scale = 1/s),
 #   theta2 = function(x) plogis(-(x[,1] - 0.27), scale = 1/s),
@@ -20,16 +21,29 @@ s <- 30
 #   theta4 = function(x) 0.25 * plogis((x[,3] - 0.73), scale = 1/s),
 #   theta5 = function(x) 0.25 * plogis((x[,3] - 0.77), scale = 1/s)
 # )
-theta_FUN_list <- list(
-  theta1 = function(x) plogis((x[,1] - 0.23), scale = 1/s),
-  theta2 = function(x) plogis(-(x[,1] - 0.27), scale = 1/s),
-  theta3 = function(x) 0.5 * plogis((x[,1] - 0.75), scale = 1/s)
-)
 # theta_FUN_list <- list(
-#   theta1 = function(x) plogis((x[,1] - 0.48), scale = 1/s),
-#   theta2 = function(x) plogis((x[,1] - 0.52), scale = 1/s)
+#   theta1 = function(x) 0.5 * plogis((x[,1] - 0.75), scale = 1/s),
+#   theta2 = function(x) plogis((x[,1] - 0.23), scale = 1/s),
+#   theta3 = function(x) plogis(-(x[,1] - 0.27), scale = 1/s)
 # )
+# theta_FUN_list <- list(
+#   theta1 = function(x) 0.5 * plogis((x[,1] - 0.75), scale = 1/s),
+#   theta2 = function(x) plogis((x[,1] - 0.23), scale = 1/s),
+#   theta3 = function(x) plogis(-(x[,1] - 0.27), scale = 1/s)
+# )
+# theta_FUN_list <- list(
+#   theta1 = function(x) plogis((x[,1] - 0.23), scale = 1/s),
+#   theta2 = function(x) plogis(-(x[,1] - 0.27), scale = 1/s),
+#   theta3 = function(x) 0.5 * plogis((x[,1] - 0.75), scale = 1/s)
+# )
+theta_FUN_list <- list(
+  theta1 = function(x) 1 * plogis(-(x[,1] - 0.15), scale = 1/s),
+  theta2 = function(x) 0.5 * plogis((x[,1] - 0.85), scale = 1/s)
+)
+
 nu_FUN <- function(x) {0 * x[,1]}
+
+
 
 #--------------------------------------------------
 #----- Start
@@ -39,6 +53,7 @@ set.seed(1)
 out <- run_criteval_sim(
   n = n,
   rho.W = rho.W, #R.W = R,
+  Sigma.W = Sigma.W,
   kappa.ratio = kappa.ratio,
   q.W = q.W,
   p.X = p.X,
@@ -63,14 +78,14 @@ df.res <- out$results
 CRIT.ALPHA <- c(
   "Delta.pop"   = 1, # Delta^*
   "Delta.V.pop" = 1, # Delta_V^*
-  "Delta"       = 1, # Delta
-  "Delta.V"     = 1, # Delta_V
+  "Delta"       = 0, # Delta
+  "Delta.V"     = 0, # Delta_V
   "Delta.grad"  = 0, # GRF-grad
   "Delta.fpt"   = 0  # GRF-fpt
 )
 
 CRIT.COL <- c("#F8766D", "#00BFC4", "#F8766D", "#00BFC4", "#F8766D", "#00BFC4")
-CRIT.LTY <- c("21", "21", "solid", "solid", "43", "43")
+CRIT.LTY <- c("longdash", "solid", "solid", "solid", "43", "43")
 CRIT.LWD <- c(0.7, 0.7, 0.7, 0.7, 0.7, 0.7)
 
 CRIT.LABS <- list(
@@ -110,7 +125,7 @@ plt.res <- df.res.visible %>%
   labs(
     x = "Threshold",
     y = "Criterion value",
-    title = "Candidate split criterion values"
+    title = "Criterion values across candidate splits"
   ) +
   geom_hline(yintercept = 0, lwd = 1, col = "gray85") +
   geom_vline(
@@ -152,7 +167,8 @@ plt.res <- df.res.visible %>%
     plot.margin = margin(t = 5, r = 5, b = 5, l = 5),
     plot.title = element_text(size = 11),
     strip.background = element_blank(),
-    strip.text = element_text(size = 11, color = "gray30")
+    strip.text = element_text(size = 11, color = "gray30"),
+    # strip.text.x = element_text(hjust = 0)
   )
 
 #--------------------------------------------------
@@ -180,7 +196,13 @@ df.theta <- data.frame(X.plot, theta.plot) %>%
     X.feature = factor(X.feature)
   )
 
-THETA.COLORS <- scales::hue_pal()(ncol(theta.plot))
+THETA.COLORS <-
+  if (ncol(theta.plot) == 2L) {
+    c("purple", "orange")
+  } else {
+    scales::hue_pal()(ncol(theta.plot))
+  }
+
 THETA.LABS <- setNames(
   lapply(seq_len(ncol(theta.plot)), function(i) {
     call <- substitute({theta[ii]^"*"}({italic(x)}), list(ii = i))
@@ -190,10 +212,12 @@ THETA.LABS <- setNames(
 )
 X.LABS <- setNames(DIM.LABS, nm = colnames(X.plot))
 
-#PLT.THETA.AXIS.TITLE.X <- expression(italic(x)[italic(ℓ)])
-#PLT.THETA.AXIS.TITLE.Y <- expression(Effect~{theta[italic(k)]^"*"}(italic(x))~of~italic(W)[italic(k)]~on~italic(Y))
 PLT.THETA.AXIS.TITLE.X <- expression(italic(x))
-PLT.THETA.AXIS.TITLE.Y <- expression(Effect~of~italic(W)[italic(k)]~on~italic(Y))
+PLT.THETA.AXIS.TITLE.Y <- expression("Effect of"~italic(W)[italic(k)]~"on"~italic(Y))
+PLT.THETA.TITLE <- expression("Effect function components"~{theta[italic(k)]^{"*"}}~(italic(x)))
+PLT.THETA.ANNO <- expression("Other features of"~italic(x)~"set to zero")
+
+plt.anno.obj <- label_wrap_gen(14)(PLT.THETA.ANNO)
 
 plt.theta <- df.theta %>%
   #filter(X.feature == "X1") %>%
@@ -201,7 +225,7 @@ plt.theta <- df.theta %>%
   labs(
     x = PLT.THETA.AXIS.TITLE.X,
     y = PLT.THETA.AXIS.TITLE.Y,
-    title = "Effect function curves (other dimensions of x held at zero)"
+    title = PLT.THETA.TITLE
   ) +
   facet_wrap(
     vars(X.feature),
@@ -210,7 +234,7 @@ plt.theta <- df.theta %>%
   geom_hline(yintercept = 0, lwd = 1, col = "gray85") +
   geom_line(linewidth = 1) +
   scale_x_continuous(limits = c(0, 1)) +
-  #scale_y_continuous(position = "right") +
+  # scale_y_continuous(position = "right") +
   # scale_y_continuous(
   #   sec.axis = sec_axis(
   #     transform = ~ ., # Use the same transformation as the primary axis
@@ -226,18 +250,25 @@ plt.theta <- df.theta %>%
     axis.ticks = element_blank(),
     axis.title = element_text(size = 10, color = "gray30"),
     #axis.title.y.left = element_blank(),
+    #axis.title.y.right = element_blank(),
     legend.title = element_blank(),
     legend.margin = margin(t = -10, r = 0, b = 0, l = 0),
     legend.position = "bottom",
-    legend.text = element_text(size = 10, color = "gray25"),
+    legend.text = element_text(size = 10, color = "gray30"),
     plot.margin = margin(t = 5, r = 5, b = 5, l = 0),
     plot.title = element_text(size = 11),
     strip.background = element_blank(),
     strip.text = element_text(size = 11, color = "gray30"),
+    # strip.text.x = element_text(hjust = 0),
     strip.text.y = element_text(angle = 0)
-  )
-
-
+  ) +
+  annotate("text",
+           label = "Other~features~of~italic(x)\nset~to~zero",
+           parse = TRUE,
+           x = 1, hjust = 1,
+           y = 1, size = 4,
+           color = "gray30")
+# plt.theta
 
 
 #--------------------------------------------------
@@ -246,7 +277,8 @@ plt.theta <- df.theta %>%
 library(GGally)
 
 W.COLORS <- setNames(
-  scales::hue_pal()(ncol(out$data$W)),
+  #scales::hue_pal()(ncol(out$data$W)),
+  THETA.COLORS,
   nm = colnames(out$data$W)
 )
 W.LABS <- setNames(
@@ -315,7 +347,7 @@ plt.W <- out$data$W %>%
   data.frame() %>%
   slice(W.plt.idx) %>%
   GGally::ggpairs(
-    title        = "Regressor distribution",
+    title        = "Empirical regressor distribution",
     lower = list(continuous = custom_lower),
     diag  = list(continuous = custom_diag),
     upper = list(continuous = custom_upper),
@@ -331,6 +363,7 @@ plt.W <- out$data$W %>%
     plot.title = element_text(size = 11),
     strip.background = element_blank(),
     strip.text = element_text(size = 11, color = "gray30"),
+    # strip.text.x = element_text(hjust = 0),
     strip.text.y = element_text(angle = 0)
   )
 
@@ -349,3 +382,5 @@ grid.arrange(
   ncol = 2
 )
 
+
+out$dgp$Sigma.W

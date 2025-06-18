@@ -2,8 +2,7 @@
 % Please edit documentation in R/run_criteval_sim.R
 \name{run_criteval_sim}
 \alias{run_criteval_sim}
-\title{Run a customizable splitting criteria simulation under a varying-coefficient
-model design}
+\title{Run the splitting criteria simulation}
 \usage{
 run_criteval_sim(
   n,
@@ -12,6 +11,7 @@ run_criteval_sim(
   R.W = NULL,
   q.W,
   mu.W = NULL,
+  Sigma.W = NULL,
   p.X,
   sigma.eps,
   theta_FUN_list,
@@ -27,15 +27,21 @@ run_criteval_sim(
 \arguments{
 \item{n}{Integer, the total number of observations.}
 
-\item{kappa.ratio}{Numeric, the target condition number ratio for the \code{W} covariance matrix.}
+\item{kappa.ratio}{Numeric, the target condition number ratio for the covariance matrix
+of the primary regressors \code{W}. Ignored if a covariance matrix \code{Sigma.W} is provided.}
 
-\item{rho.W}{Numeric, the AR(1) correlation for \code{W} regressors.}
+\item{rho.W}{Numeric, the AR(1) correlation for \code{W} regressors. Ignored if either a
+correlation matrix \code{R.W} or a covariance matrix \code{Sigma.W} are provided.}
 
-\item{R.W}{A pre-specified correlation matrix for \code{W}.}
+\item{R.W}{A pre-specified correlation matrix for \code{W}. Ignored if a covariance matrix
+\code{Sigma.W} is provided.}
 
-\item{q.W}{Integer, the number of "strong" (high-variance) \code{W} regressors.}
+\item{q.W}{Integer, the number of "strong" (high-variance) \code{W} regressors. Ignored if a
+covariance matrix \code{Sigma.W} is provided.}
 
 \item{mu.W}{Numeric vector, the mean of \code{W} regressors.}
+
+\item{Sigma.W}{A covariance matrix for \code{W}.}
 
 \item{p.X}{Integer, the dimension of the auxiliary covariates \code{X}.}
 

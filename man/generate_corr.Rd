@@ -10,14 +10,14 @@ generate_corr(rho = NULL, K = NULL, R = NULL)
 \item{rho}{The AR(1) correlation parameter, a value in (-1, 1). See \code{\link[=generate_AR1]{generate_AR1()}}.
 Only used if \code{R} is \code{NULL}.}
 
-\item{K}{The target dimension for the matrix. Required if \code{R} is \code{NULL}, ignored otherwise.}
+\item{K}{The target dimension for the matrix. Required if \code{R = NULL}, ignored otherwise.}
 
-\item{R}{An optional, pre-specified correlation matrix. If provided, \code{rho} and \code{K} are ignored.}
+\item{R}{An optional correlation matrix. If provided, \code{rho} and \code{K} are ignored.}
 }
 \value{
-A \eqn{K}-by-\eqn{K} correlation matrix.
+A \eqn{K\times K} correlation matrix.
 }
 \description{
-A helper function to generate a \eqn{K}-by-\eqn{K} correlation matrix, defaulting to an
+A helper function to generate a \eqn{K\times K} correlation matrix, defaulting to an
 AR(1) structure if a specific matrix \code{R} is not provided.
 }
